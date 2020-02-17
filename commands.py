@@ -335,3 +335,4 @@ class WeaponInfo(Command):
         self.setInterface(menus.WeaponInfoMenu(self.weapon))
 
     #changes
+    #singleton!
