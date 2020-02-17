@@ -23,6 +23,7 @@ import copy
 import random
 import numpy.lib.scimath as npMath
 import numpy as np
+import gamemanager as gm
 
 initLog = log.Log("initializationLogs")
 
@@ -269,7 +270,7 @@ class PlanetEntity(object):
         self.inventory.remove(item, quantity)
 
     def getTimeDifference(self):
-        self.currentTime = self.system.galaxy.game.getTime()
+        self.currentTime = gm.getTime()
         d = self.currentTime - self.lastTime
         self.lastTime = self.currentTime
         return d
@@ -342,8 +343,7 @@ class SystemEntity(object):
 
 
 class Galaxy(object):
-    def __init__(self, game, x=5, y=5):
-        self.game = game
+    def __init__(self, x=5, y=5):
         self.systemGrid = []
         self.width = x
         self.height = y

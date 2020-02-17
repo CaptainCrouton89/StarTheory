@@ -4,6 +4,7 @@ import time
 import random
 import init
 import itemManipulation
+import gamemanager as gm
 
 class Command(object):
 
@@ -12,16 +13,12 @@ class Command(object):
         self.name = self.__class__.__name__
         self.combatChance = 0
 
-    def build(self, game):
-        self.game = game
-        return self
-
     def execute(self):
         print("Empty command executed")
 
     def setInterface(self, interface):
         print(f"\nSetting interface to {interface.__class__.__name__} / {interface.name}\n\n")
-        self.game.interfaceStack.push(interface)
+        gm.interfaceStack.push(interface)
 
     def showMap(self):
         #show map
@@ -46,14 +43,14 @@ class AddWeapon(Command):
             print("The weapon is not yet online!")
             time.sleep(.1)
             self.setInterface(menus.WeaponInfoMenu(self.weapon))
-        elif self.weapon.energyCost > self.game.player.tempEnergy:
+        elif self.weapon.energyCost > gm.player.tempEnergy:
             print("You need more energy!")
             time.sleep(.1)
             self.setInterface(menus.WeaponInfoMenu(self.weapon))
         else:
-            self.game.combatManager.addToQueue(self.weapon, self.game.player)
+            gm.combatManager.addToQueue(self.weapon, gm.player)
             print("Weapon added")
-            self.setInterface(menus.FightMenu(self.game.player))
+            self.setInterface(menus.FightMenu(gm.player))
 
 
 class Back(Command):
@@ -62,7 +59,7 @@ class Back(Command):
         super().__init__()
 
     def execute(self):
-        self.game.getPreviousInterface()
+        gm.getPreviousInterface()
 
 
 class Claim(Command):
@@ -101,8 +98,8 @@ class Fight(Command):
         super().__init__()
 
     def execute(self):
-        self.game.newCombat()
-        self.setInterface(menus.FightMenu(self.game.player))
+        gm.newCombat()
+        self.setInterface(menus.FightMenu(gm.player))
 
 
 class Fire(Command):
@@ -111,9 +108,9 @@ class Fire(Command):
         super().__init__()
 
     def execute(self):
-        self.game.combatManager.AIBuildQueue()
-        self.game.combatManager.runCombat()
-        self.setInterface(menus.FightMenu(self.game.player))
+        gm.combatManager.AIBuildQueue()
+        gm.combatManager.runCombat()
+        self.setInterface(menus.FightMenu(gm.player))
 
 
 class Help(Command):
@@ -131,7 +128,7 @@ class Inventory(Command):
         super().__init__()
 
     def execute(self):
-        self.setInterface(menus.InventoryMenu(self.game.player))
+        self.setInterface(menus.InventoryMenu(gm.player))
 
 
 class Map(Command):
@@ -162,7 +159,7 @@ class Planet(Command):
 
     def execute(self):
         if self.potentialCombat():
-            self.game.runCommand(RandomEncounter())
+            gm.runCommand(RandomEncounter())
         self.setInterface(menus.PlanetMenu(self.planet))
 
 
@@ -201,8 +198,8 @@ class RandomEncounter(Fight):
         super().__init__()
 
     def execute(self):
-        self.game.newCombat()
-        self.setInterface(menus.FightMenu(self.game.player, random=True))
+        gm.newCombat()
+        self.setInterface(menus.FightMenu(gm.player, random=True))
 
 
 class Save(Command):
@@ -211,7 +208,7 @@ class Save(Command):
         super().__init__()
 
     def execute(self):
-        self.game.save()
+        gm.save()
 
 
 class ShipPicker(Command):
@@ -243,8 +240,8 @@ class System(Command):
 
     def execute(self):
         if self.potentialCombat():
-            self.game.runCommand(RandomEncounter())
-        self.game.nextTick()
+            gm.runCommand(RandomEncounter())
+        gm.nextTick()
         self.setInterface(menus.SystemMenu(self.system))
 
 
@@ -268,7 +265,7 @@ class Trade(Command):
         if isinstance(self.market, init.PlanetEntity):
             for container in self.market.inventory.getAll():
                 container.update()
-        self.shop = itemManipulation.Shop(self.market, self.game.player)
+        self.shop = itemManipulation.Shop(self.market, gm.player)
         self.setInterface(menus.TradeMenu(self.shop))
 
 

@@ -1,12 +1,13 @@
 from customFormat import *
 import time
 import StarTheory
+import gamemanager as gm
 
 
 class Story(object):
 
-    def __init__(self, gameManager):
-        self.game = gameManager
+    def __init__(self):
+        pass
 
     def firstStart(self):
         clearScreen()
@@ -45,7 +46,7 @@ class Story(object):
         time.sleep(4)
         printItalics("There, that was it. Five years. Just five years.")
         time.sleep(4)
-        print("...{0}?".format(self.game.player.name))
+        print("...{0}?".format(gm.player.name))
         time.sleep(2)
         printItalics(
             "Just a nap, you imagine... Was it getting colder already?")

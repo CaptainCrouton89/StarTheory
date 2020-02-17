@@ -33,6 +33,7 @@ from init import *
 import commands
 import menus
 import story
+import gamemanager as gm
 
 logger = log.Log("StarTheoryLogs")
 
@@ -196,235 +197,6 @@ class Player(GenericPlayer):
         self.credits = 10000
     
 
-class CombatManager(object):
-
-    def __init__(self, player):  # Usually also option.source would be put in as enemy ship
-        #self.game = GameManager
-        self.player = Player.getInstance()
-        self.queue = []
-        self.turn = 0
-        self.enemies = []
-        
-    def initializeCombat(self):
-        for combatant in self.getCombatants():
-            combatant.resetBattleStats()
-
-    def getCombatants(self):
-        combatants = []
-        for enemy in self.enemies:
-            combatants.append(enemy)
-        combatants.append(self.player)
-        return combatants
-    
-    def addEnemies(self, *enemies):
-        print(f"Adding enemies: {enemies}")
-        for enemy in enemies:
-            self.enemies.append(enemy)
-
-    def endCombat(self):
-        self.player.resetBattleStats()
-        for enemy in self.enemies:
-            enemy.resetBattleStats()
-        self.enemies.clear()
-
-    def runCombat(self):
-        global logger
-        logger.log("Running Combat")
-        self.turn += 1
-        while True:
-            if not self.queue:
-                break
-            weapon, target = self.queue.pop(0)
-            self.takeDamage(weapon, target)
-
-        #Check for 0 hp
-        for player in self.getCombatants():
-            player.nextRound()
-        self.queue.clear()
-        
-        #self.checkEnd()
-
-    def checkEnd(self):
-        if self.player.tempHitpoints <= 0:
-            commands.Victory(self.enemies[0]).build(self.game).execute()
-        for enemy in self.enemies:
-            if enemy.tempHitpoints <= 0:
-                commands.Victory(enemy).build(self.game).execute()
-
-    def takeDamage(self, weapon, player):
-        damage = max(int(weapon.damage - (
-            player.tempEvasion * weapon.evasionResistance +
-            player.tempHull * weapon.hullResistance +
-            player.tempShield * weapon.shieldResistance
-        )), 0)
-        damage *= weapon.potency
-        player.tempHitpoints = max(player.tempHitpoints - damage, 0)
-        player.tempEvasion = int(max(player.tempEvasion - max(damage * weapon.evasionDamage, 0), 0))
-        player.tempHull = int(max(player.tempHull - max(damage * weapon.hullDamage, 0), 0))
-        player.tempShield = int(max(player.tempShield - max(damage * weapon.shieldDamage, 0), 0))
-        global logger
-        logger.log(f'''
-        Turn: {self.turn}
-        Player: {player.name}
-        Avg DPR: {(500 - player.tempHitpoints)/self.turn}
-        Damage Taken: {damage}
-        HP: {player.tempHitpoints}
-        Evasion: {player.tempEvasion}
-        Hull: {player.tempHull}
-        Shield: {player.tempShield}
-        Was attacked by: {weapon.name}''', console=True)
-        time.sleep(.1)
-
-    def addToQueue(self, weapon, source, target=0):
-        self.queue.append((weapon, self.getCombatants()[target]))
-        weapon.actionEffect(source)
-
-    def AIBuildQueue(self):
-        ''' 
-        V1: Chooses random weapon to fire each turn, and if it can't fire it, it randomly chooses again.
-        V2: Chooses weapon that will reduce player's lowest stat if it is above half, otherwise tries to fire weapon that 
-            deals the most damage using that stat
-        V3: TBD
-        '''
-        for enemy in self.enemies:
-            counter = 0
-            while True:
-                counter += 1
-                if counter > 100:
-                    logger.log("Enemy failed to find weapon")
-                    print("AI Failure, please check logs")
-                    time.sleep(1)
-                    break
-                weaponChoice = random.choice(enemy.getItemsOfType("weapon"))
-                if weaponChoice.ticks < weaponChoice.cooldown:
-                    continue
-                elif weaponChoice.energyCost > enemy.energy:
-                    continue
-                else:
-                    self.addToQueue(weaponChoice, enemy, target=-1)
-                    break
-                
-
-class ResponseManager(object):
-
-    def __init__(self):
-        self.keybinds = {}
-
-    def getInput(self):
-        userInput = input().lower()
-        return userInput
-
-    def bind(self, key, newKey):
-        self.keybinds[key] = newKey
-
-    def unbind(self, key):
-        self.keybinds.pop(key, None)
-
-    def rebind(self, userInput):
-        if userInput in self.keybinds.keys():
-            return self.keybinds[userInput]
-        return userInput
-
-    def getResponse(self):
-        userInput = self.getInput()
-        order = self.rebind(userInput)
-        return order
-     
-
-class InterfaceStack(object):
-
-    def __init__(self, *interfaces):
-        self.items = []
-        for interface in interfaces:
-            self.items.append(interface)
-
-    def isEmpty(self):
-        return self.items == []
-
-    def push(self, item):
-        self.items.append(item)
-        if len(self.items) > 10:
-            self.items = self.items[-100:]
-
-    def pop(self):
-        return self.items.pop()
-
-
-    def peek(self):
-        return self.items[len(self.items)-1]
-
-    def size(self):
-        return len(self.items)
-
-
-class GameManager(object):
-
-    def __init__(self):
-        pass
-
-    def initialize(self, quickStart=True):
-        self.time = 0
-
-        # Creates Singletons
-        self.player = Player()
-        self.story = story.Story(self)
-        self.galaxy = Galaxy(self).initialize()
-        self.responseManager = ResponseManager()
-        self.interfaceStack = InterfaceStack(
-            menus.FactionMenu(self.galaxy.factionList))
-        self.combatManager = CombatManager(self.player)
-
-        # Runs story
-        if not quickStart:
-            self.player.name = input("\nPlease type your name: ")
-            self.story.firstStart()
-
-    def getCommand(self):
-        # Use option IDs to identify what people want to do, eg. if option.ID = 0: do blah. Different menus would have different ID numbers for their options
-        entry = self.responseManager.getResponse()
-        return self.getInterface().getCommand(entry)
-
-    def getInterface(self):
-        return self.interfaceStack.peek()
-
-    def getPreviousInterface(self):
-        previous = self.interfaceStack.pop()
-        if self.interfaceStack.peek().__class__ == previous.__class__:
-            self.getPreviousInterface()
-        else:
-            print(f"Back to {self.interfaceStack.peek()}")
-        
-    def runCommand(self, command):
-        command.build(self)
-        command.execute()
-
-    def runGame(self):
-        self.getInterface().display()
-        command = self.getCommand()
-        print(f"\nCommand: {command.name}\n")
-        self.runCommand(command)
-
-    def newCombat(self):
-        self.combatManager.addEnemies(self.generateEnemy())
-        self.combatManager.initializeCombat()
-
-    def generateEnemy(self, tier=1, location=None):
-        enemy = Enemy()
-        return enemy
-    
-    def nextTick(self):
-        self.time += 1
-
-    def getTime(self):
-        return self.time
-
-    def save(self):
-        print("Saving")
-        time.sleep(.3)
-        with open('save/save', 'wb') as saveFile:
-            pickle.dump(self, saveFile)
-        print("Save successful")
-
 
 class Game(object):
 
@@ -436,9 +208,9 @@ class Game(object):
         print("\n"*4)
 
     def newGame(self, quickStart=False):
-        self.game = GameManager()
-        self.game.initialize(quickStart)
+        gm.initialize(quickStart)
 
+    # This method no longer works
     def loadSave(self):
         print("Loading save")
         time.sleep(.3)
@@ -464,16 +236,14 @@ class Game(object):
 
     def runGame(self):
         while True:
-            self.game.runGame()
+            gm.runGame()
 
 
 def main():
 
     game = Game()
     game.start()
-
-    while True:
-        game.runGame()
+    game.runGame()
 
 if __name__ == "__main__":
     main()
