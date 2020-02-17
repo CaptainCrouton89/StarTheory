@@ -200,7 +200,7 @@ class CombatManager(object):
                 counter += 1
                 if counter > 100:
                     print("AI Failure, please check logs")
-                    time.sleep(1)
+                    tm.sleep(1)
                     break
                 weaponChoice = random.choice(enemy.getItemsOfType("weapon"))
                 if weaponChoice.ticks < weaponChoice.cooldown:
