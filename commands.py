@@ -333,3 +333,5 @@ class WeaponInfo(Command):
 
     def execute(self):
         self.setInterface(menus.WeaponInfoMenu(self.weapon))
+
+    #changes
