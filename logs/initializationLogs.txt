@@ -1,0 +1,85 @@
+
+
+INFO: <class 'equippables.resources.Hydrogen'> is leaf
+
+INFO: <class 'equippables.resources.Helium'> is leaf
+
+INFO: <class 'equippables.resources.Oxygen'> is leaf
+
+INFO: <class 'equippables.resources.Carbon'> is leaf
+
+INFO: <class 'equippables.resources.Iron'> is leaf
+
+INFO: <class 'equippables.resources.Neon'> is leaf
+
+INFO: <class 'equippables.resources.Nitrogen'> is leaf
+
+INFO: <class 'equippables.resources.Silicon'> is leaf
+
+INFO: <class 'equippables.resources.Aluminum'> is leaf
+
+INFO: <class 'equippables.resources.Sulfur'> is leaf
+
+INFO: <class 'equippables.resources.Sodium'> is leaf
+
+INFO: <class 'equippables.resources.Phosphorus'> is leaf
+
+INFO: <class 'equippables.resources.Chlorine'> is leaf
+
+INFO: <class 'equippables.resources.Manganese'> is leaf
+
+INFO: <class 'equippables.resources.Copper'> is leaf
+
+INFO: <class 'equippables.resources.Calcium'> is leaf
+
+INFO: <class 'equippables.resources.Uranium'> is leaf
+
+INFO: <class 'equippables.resources.Cosmium'> is leaf
+
+INFO: <class 'equippables.resources.Valereon'> is leaf
+
+INFO: <class 'equippables.items.cargo.Food'> is leaf
+
+INFO: <class 'equippables.items.cargo.ExoticFood'> is leaf
+
+INFO: <class 'equippables.items.cargo.Liqour'> is leaf
+
+INFO: <class 'equippables.items.cargo.LuxuryGoods'> is leaf
+
+INFO: <class 'equippables.items.cargo.Textiles'> is leaf
+
+INFO: <class 'equippables.items.cargo.Medicine'> is leaf
+
+INFO: <class 'equippables.items.cargo.Slaves'> is leaf
+
+INFO: <class 'equippables.items.cargo.IllicitDrugs'> is leaf
+
+INFO: <class 'equippables.items.modules.HydroCesBattery'> is leaf
+
+INFO: <class 'equippables.items.modules.PReactor'> is leaf
+
+INFO: <class 'equippables.items.modules.Engine'> is leaf
+
+INFO: <class 'equippables.items.modules.Bridge'> is leaf
+
+INFO: <class 'equippables.items.weapons.LightRailgun'> is leaf
+
+INFO: <class 'equippables.items.weapons.HeavyRailgun'> is leaf
+
+INFO: <class 'equippables.items.weapons.MoFoLaser'> is leaf
+
+INFO: <class 'equippables.items.weapons.LightMissileTubes'> is leaf
+
+INFO: <class 'equippables.items.weapons.LightLaser'> is leaf
+
+INFO: <class 'equippables.upgrades.UpgradeSpace'> is leaf
+
+INFO: <class 'equippables.upgrades.HullUpgrade'> is leaf
+
+INFO: <class 'equippables.upgrades.ShieldUpgrade'> is leaf
+
+INFO: <class 'equippables.upgrades.EvasionUpgrade'> is leaf
+
+INFO: Number of planets: 113
+
+INFO: Number of systems: 25

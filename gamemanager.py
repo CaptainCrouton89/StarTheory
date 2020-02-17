@@ -1,6 +1,6 @@
 #GameManager
 
-import time
+import time as tm
 import menus
 import StarTheory as st
 import story
@@ -10,6 +10,18 @@ import random
 import commands
 
 def initialize(quickStart=True):
+    global time
+    global player
+    global storyline
+    global galaxy
+    global responseManager, interfaceStack, combatManager
+    time = 0
+    player = st.Player()
+    storyline = story.Story()
+    galaxy = init.Galaxy().initialize()
+    responseManager = ResponseManager()
+    interfaceStack = InterfaceStack(menus.FactionMenu(galaxy.factionList))
+    combatManager = CombatManager(player)
     # Runs story
     if not quickStart:
         player.name = input("\nPlease type your name: ")
@@ -23,6 +35,11 @@ def getCommand():
 def getInterface():
     return interfaceStack.peek()
 
+def setInterface(interface):
+    global interfaceStack
+    print(f"\nSetting interface to {interface.__class__.__name__} / {interface.name}\n\n")
+    interfaceStack.push(interface)
+
 def getPreviousInterface():
     previous = interfaceStack.pop()
     if interfaceStack.peek().__class__ == previous.__class__:
@@ -31,7 +48,6 @@ def getPreviousInterface():
         print(f"Back to {interfaceStack.peek()}")
     
 def runCommand(command):
-    command.build()
     command.execute()
 
 def runGame():
@@ -57,7 +73,7 @@ def getTime():
 
 def save():
     print("Saving")
-    time.sleep(3)
+    tm.sleep(3)
     with open('save/save', 'wb') as saveFile:
         pickle.dump(saveFile)
     print("Save successful")
@@ -165,7 +181,7 @@ class CombatManager(object):
         Hull: {player.tempHull}
         Shield: {player.tempShield}
         Was attacked by: {weapon.name}''', console=True)"""
-        time.sleep(.1)
+        tm.sleep(.1)
 
     def addToQueue(self, weapon, source, target=0):
         self.queue.append((weapon, self.getCombatants()[target]))
@@ -221,11 +237,11 @@ class InterfaceStack(object):
     def size(self):
         return len(self.items)
 
-# Singleton, global variables. Can be acccesed by useing GameManager.varName
-time = 0
-player = st.Player()
-storyline = story.Story()
-galaxy = init.Galaxy().initialize()
-responseManager = ResponseManager()
-interfaceStack = InterfaceStack(menus.FactionMenu(galaxy.factionList))
-combatManager = CombatManager(player)
+
+time = None
+player = None
+storyline = None
+galaxy = None
+responseManager = None
+interfaceStack = None
+combatManager = None

@@ -16,10 +16,6 @@ class Command(object):
     def execute(self):
         print("Empty command executed")
 
-    def setInterface(self, interface):
-        print(f"\nSetting interface to {interface.__class__.__name__} / {interface.name}\n\n")
-        gm.interfaceStack.push(interface)
-
     def showMap(self):
         #show map
         pass
@@ -42,15 +38,15 @@ class AddWeapon(Command):
         if self.weapon.ticks < self.weapon.cooldown:
             print("The weapon is not yet online!")
             time.sleep(.1)
-            self.setInterface(menus.WeaponInfoMenu(self.weapon))
+            gm.setInterface(menus.WeaponInfoMenu(self.weapon))
         elif self.weapon.energyCost > gm.player.tempEnergy:
             print("You need more energy!")
             time.sleep(.1)
-            self.setInterface(menus.WeaponInfoMenu(self.weapon))
+            gm.setInterface(menus.WeaponInfoMenu(self.weapon))
         else:
             gm.combatManager.addToQueue(self.weapon, gm.player)
             print("Weapon added")
-            self.setInterface(menus.FightMenu(gm.player))
+            gm.setInterface(menus.FightMenu(gm.player))
 
 
 class Back(Command):
@@ -69,7 +65,7 @@ class Claim(Command):
         self.planet = planet
 
     def execute(self):
-        self.setInterface(menus.ClaimMenu(self.planet))
+        gm.setInterface(menus.ClaimMenu(self.planet))
 
 
 class ExamineItem(Command):
@@ -79,7 +75,7 @@ class ExamineItem(Command):
         self.item = item
 
     def execute(self):
-        self.setInterface(menus.ExamineItemMenu(self.shop, self.item))
+        gm.setInterface(menus.ExamineItemMenu(self.shop, self.item))
 
 
 class Faction(Command):
@@ -89,7 +85,7 @@ class Faction(Command):
         self.factionList = factionList
 
     def execute(self):
-        self.setInterface(menus.FactionMenu(self.factionList))
+        gm.setInterface(menus.FactionMenu(self.factionList))
 
 
 class Fight(Command):
@@ -99,7 +95,7 @@ class Fight(Command):
 
     def execute(self):
         gm.newCombat()
-        self.setInterface(menus.FightMenu(gm.player))
+        gm.setInterface(menus.FightMenu(gm.player))
 
 
 class Fire(Command):
@@ -110,7 +106,7 @@ class Fire(Command):
     def execute(self):
         gm.combatManager.AIBuildQueue()
         gm.combatManager.runCombat()
-        self.setInterface(menus.FightMenu(gm.player))
+        gm.setInterface(menus.FightMenu(gm.player))
 
 
 class Help(Command):
@@ -119,7 +115,7 @@ class Help(Command):
         super().__init__()
 
     def execute(self):
-        self.setInterface(menus.HelpMenu())
+        gm.setInterface(menus.HelpMenu())
 
 
 class Inventory(Command):
@@ -128,7 +124,7 @@ class Inventory(Command):
         super().__init__()
 
     def execute(self):
-        self.setInterface(menus.InventoryMenu(gm.player))
+        gm.setInterface(menus.InventoryMenu(gm.player))
 
 
 class Map(Command):
@@ -138,7 +134,7 @@ class Map(Command):
 
     def execute(self):
         self.showMap()
-        self.setInterface(menus.MapMenu())
+        gm.setInterface(menus.MapMenu())
 
 
 class Nothing(Command):
@@ -160,7 +156,7 @@ class Planet(Command):
     def execute(self):
         if self.potentialCombat():
             gm.runCommand(RandomEncounter())
-        self.setInterface(menus.PlanetMenu(self.planet))
+        gm.setInterface(menus.PlanetMenu(self.planet))
 
 
 class PlanetPicker(Command):
@@ -170,7 +166,7 @@ class PlanetPicker(Command):
         self.system = system
 
     def execute(self):
-        self.setInterface(menus.PlanetPickerMenu(self.system))
+        gm.setInterface(menus.PlanetPickerMenu(self.system))
 
 
 class Quest(Command):
@@ -180,7 +176,7 @@ class Quest(Command):
         self.planet = planet
 
     def execute(self):
-        self.setInterface(menus.QuestMenu(self.planet))
+        gm.setInterface(menus.QuestMenu(self.planet))
 
 
 class QuitGame(Command):
@@ -199,7 +195,7 @@ class RandomEncounter(Fight):
 
     def execute(self):
         gm.newCombat()
-        self.setInterface(menus.FightMenu(gm.player, random=True))
+        gm.setInterface(menus.FightMenu(gm.player, random=True))
 
 
 class Save(Command):
@@ -218,7 +214,7 @@ class ShipPicker(Command):
         self.system = system
 
     def execute(self):
-        self.setInterface(menus.ShipPickerMenu(self.system))
+        gm.setInterface(menus.ShipPickerMenu(self.system))
 
 
 class ShipStats(Command):
@@ -228,7 +224,7 @@ class ShipStats(Command):
         self.source = source
 
     def execute(self):
-        self.setInterface(menus.StatsMenu(self.source))
+        gm.setInterface(menus.StatsMenu(self.source))
 
 
 class System(Command):
@@ -242,7 +238,7 @@ class System(Command):
         if self.potentialCombat():
             gm.runCommand(RandomEncounter())
         gm.nextTick()
-        self.setInterface(menus.SystemMenu(self.system))
+        gm.setInterface(menus.SystemMenu(self.system))
 
 
 class SystemPicker(Command):
@@ -252,7 +248,7 @@ class SystemPicker(Command):
         self.system = system
 
     def execute(self):
-        self.setInterface(menus.SystemPickerMenu(self.system))
+        gm.setInterface(menus.SystemPickerMenu(self.system))
 
 
 class Trade(Command):
@@ -266,7 +262,7 @@ class Trade(Command):
             for container in self.market.inventory.getAll():
                 container.update()
         self.shop = itemManipulation.Shop(self.market, gm.player)
-        self.setInterface(menus.TradeMenu(self.shop))
+        gm.setInterface(menus.TradeMenu(self.shop))
 
 
 class TradeCategory(Command):
@@ -277,7 +273,7 @@ class TradeCategory(Command):
         self.category = category
 
     def execute(self):
-        self.setInterface(menus.TradeCategoryMenu(self.shop, self.category))
+        gm.setInterface(menus.TradeCategoryMenu(self.shop, self.category))
 
 
 class TransactItem(Command):
@@ -305,7 +301,7 @@ class TransactItem(Command):
                 self.shop.transact(buyer, seller, quantity, self.item)
                 break
 
-        self.setInterface(menus.TradeCategoryMenu(self.shop, self.item.type))
+        gm.setInterface(menus.TradeCategoryMenu(self.shop, self.item.type))
         
 
 class UpdateShop(Command):
@@ -319,7 +315,7 @@ class UpdateShop(Command):
         self.planet.timeDifference = self.turns
         for container in self.planet.inventory.getAll():
             container.update()
-        self.setInterface(menus.StatsMenu(self.planet))
+        gm.setInterface(menus.StatsMenu(self.planet))
 
 
 class WeaponInfo(Command):
@@ -329,7 +325,7 @@ class WeaponInfo(Command):
         self.weapon = weapon
 
     def execute(self):
-        self.setInterface(menus.WeaponInfoMenu(self.weapon))
+        gm.setInterface(menus.WeaponInfoMenu(self.weapon))
 
     #changes
     #singleton!

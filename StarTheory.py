@@ -13,6 +13,11 @@ To Do:
 
 - When you die/ship is destroyed (when you don't surrender) there have to be long lasting consequences with reminders. Interest is higher for your loans, stuff
 
+More Todo:
+- Rework logs
+- Rework combat UX
+- Rework Story generation code
+- Make dialogue generator
 
 '''
 
@@ -99,13 +104,12 @@ class GenericPlayer(object):
     # allows calls like 'player.hitpoints' instead of 'player.stats.hitpoints'
     def __getattr__(self, stat):
         return getattr(self.stats, stat)
-        raise AttributeError(stat)
 
     def getItemsOfType(self, itemType):
         return self.activeInventory.getItemsOfType(itemType)
 
     def getContainersOfType(self, itemType):
-        return self.activeInventory.getContainersOfType(itemType)
+        return self.activeInventory.getItemsOfType(itemType)
 
     def resetBattleStats(self):
         self.activeInventory.reset()
