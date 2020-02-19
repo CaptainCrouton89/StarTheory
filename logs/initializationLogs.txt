@@ -80,6 +80,6 @@ INFO: <class 'equippables.upgrades.ShieldUpgrade'> is leaf
 
 INFO: <class 'equippables.upgrades.EvasionUpgrade'> is leaf
 
-INFO: Number of planets: 113
+INFO: Number of planets: 120
 
 INFO: Number of systems: 25

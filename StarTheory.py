@@ -146,6 +146,21 @@ class GenericPlayer(object):
             return item.rewardQuantity
 
 
+class Loot():
+
+    def __init__(self, ship):
+        self.ship = ship
+    
+    def getWealth(self):
+        avgMaterialQuantity = self.ship.level * 45
+        loot = [
+            varyByPercent(avgMaterialQuantity, .35),
+            varyByPercent(avgMaterialQuantity, .35),
+            varyByPercent(avgMaterialQuantity, .35)
+        ]
+        return loot
+
+
 class Enemy(GenericPlayer):
 
     def __init__(self):

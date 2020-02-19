@@ -1,3 +1,5 @@
+import random
+
 def spread(x):
     if x < 0 or x > 1:
         print(x)
@@ -17,3 +19,6 @@ def narrow(x):
     elif .5 < x <= 1:
         result = 1 - (1 - x) ** (1.5 - x)
     return result
+
+def varyByPercent(number, percentage):
+    return (random.uniform(-1, 1) * percentage * number) + number

@@ -5,6 +5,7 @@ import random
 import init
 import itemManipulation
 import gamemanager as gm
+import StarTheory as st
 
 class Command(object):
 
@@ -316,6 +317,17 @@ class UpdateShop(Command):
         for container in self.planet.inventory.getAll():
             container.update()
         gm.setInterface(menus.StatsMenu(self.planet))
+
+
+class Victor(Command):
+
+    def __init__(self, enemy):
+        super().__init__()
+        self.enemy = enemy
+
+    def execute(self):
+        loot = st.Loot(self.enemy)
+        gm.setInterface(menus.VictoryMenu(self.enemy, loot))
 
 
 class WeaponInfo(Command):

@@ -418,6 +418,22 @@ class FightMenu(Interface):
             print(f"\nYou are under attack by enemy pirates! Defend your ship!")
 
 
+class VictoryMenu(Interface):
+
+    def __init__(self, enemy, loot):
+        super().__init__()
+        self.name = "Victory!"
+        
+        self.content = "You have destroyed their ship! You have gained {0} scrap, {1} circuits, and {2} wires.".format(
+            self.scrapMetal,
+            self.wires,
+            self.circuits)
+        self.options = [
+            Option("next", "return to previous menu",
+                   str(self.source.__name__), self.source)
+        ]
+
+
 class WeaponInfoMenu(Interface):
 
     def __init__(self, weapon):
